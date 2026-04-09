@@ -1,16 +1,34 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useQCProject } from "@/hooks/useQCProject";
+import { LandingScreen } from "@/components/LandingScreen";
+import { InputDashboard } from "@/components/InputDashboard";
+import { ProcessingScreen } from "@/components/ProcessingScreen";
+import { ResultsDashboard } from "@/components/ResultsDashboard";
+import { ExportScreen } from "@/components/ExportScreen";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
-  return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
-  );
+const Index = () => {
+  const {
+    screen, project, output, steps,
+    startProject, goToExport, goToResults, goToInput, goToLanding,
+  } = useQCProject();
+
+  switch (screen) {
+    case "landing":
+      return <LandingScreen onStart={goToInput} />;
+    case "input":
+      return <InputDashboard onSubmit={startProject} onBack={goToLanding} />;
+    case "processing":
+      return <ProcessingScreen steps={steps} />;
+    case "results":
+      return project && output ? (
+        <ResultsDashboard output={output} project={project} onExport={goToExport} onBack={goToInput} />
+      ) : null;
+    case "export":
+      return project && output ? (
+        <ExportScreen output={output} project={project} onBack={goToResults} />
+      ) : null;
+    default:
+      return <LandingScreen onStart={goToInput} />;
+  }
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
